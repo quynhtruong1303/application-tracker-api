@@ -24,7 +24,7 @@ All routes require `Authorization: Bearer <token>` header.
 
 ## Postman
 
-Postman collection is available in the [postman/](postman/) folder. 
+Postman collection is available in the [postman](postman/) folder. 
 
 ## Deployment
 

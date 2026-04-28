@@ -1,0 +1,444 @@
+{
+  "info": {
+    "_postman_id": "7211a186-d071-4c1b-a291-c7def3ac8ee5",
+    "name": "PROJECT_APPLICATION_TRACKER",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51835208",
+    "_collection_link": "https://go.postman.co/collection/51835208-7211a186-d071-4c1b-a291-c7def3ac8ee5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "POST /auth/register",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test(\"Response has token\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body.token).to.be.a('string')",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}\n\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/auth/register",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /auth/register - Duplicate email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400)",
+              "})",
+              "",
+              "pm.test(\"Returns error response\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body.message).to.equal('Email already taken')",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/auth/register",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /auth/login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"Response has token\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body.token).to.be.a('string')",
+              "    pm.collectionVariables.set(\"token\", pm.response.json().token)",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/auth/login",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /applications - Create a new application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test(\"Response has application data\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body._id).to.exist",
+              "    pm.expect(body.company).to.equal('Google')",
+              "    pm.expect(body.role).to.equal('Software Engineer')",
+              "})",
+              "",
+              "pm.collectionVariables.set(\"applicationId\", pm.response.json()._id)",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company\": \"Google\",\n  \"role\": \"Software Engineer\",\n  \"jobURL\": \"https://careers.google.com\",\n  \"status\": \"Applied\",\n  \"notes\": \"Applied through website\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/applications",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "applications"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /applications",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"Response is an array\", function () {",
+              "    pm.expect(pm.response.json()).to.be.an('array')",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/applications",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "applications"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /applications/{{applicationId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"Returns correct application\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body._id).to.equal(pm.collectionVariables.get(\"applicationId\"))",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/applications/{{applicationId}}",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "applications",
+            "{{applicationId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PUT /applications/{{applicationId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"Status was updated\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body.status).to.equal('Interviewing')",
+              "    pm.expect(body.notes).to.equal('Phone screen scheduled')",
+              "})"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"Interviewing\",\n  \"notes\": \"Phone screen scheduled\"\n}\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/applications/{{applicationId}}",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "applications",
+            "{{applicationId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE /applications/{{applicationId}}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test(\"Returns deletion message\", function () {",
+              "    const body = pm.response.json()",
+              "    pm.expect(body.message).to.equal('Application deleted')",
+              "})",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://application-tracker-api-saz8.onrender.com/applications/{{applicationId}}",
+          "protocol": "https",
+          "host": [
+            "application-tracker-api-saz8",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "applications",
+            "{{applicationId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "applicationId",
+      "value": ""
+    }
+  ]
+}

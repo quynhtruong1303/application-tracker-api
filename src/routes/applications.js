@@ -44,10 +44,23 @@ router.post('/', authenticateToken, async (req, res) => {
 
 // GET /applications/stats
 // Get application statistics for the authenticated user (e.g. count by status)
+// Optional query param: ?year=2024 — filters by the year of dateApplied
 router.get('/stats', authenticateToken, async (req, res) => {
     try {
+        const { year } = req.query
+
+        const match = { user: new mongoose.Types.ObjectId(req.user.id) }
+
+        if (year) {
+            const y = parseInt(year)
+            match.dateApplied = {
+                $gte: new Date(`${y}-01-01`),
+                $lt: new Date(`${y + 1}-01-01`)
+            }
+        }
+
         const stats = await Application.aggregate([
-            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+            { $match: match },
             { $group: { _id: '$status', count: { $sum: 1 } } }
         ])
         res.status(200).json(stats)
@@ -56,6 +69,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
         res.status(500).json({ message: 'Server error' })
     }
 })
+
 
 // GET /applications/:id
 // Get a specific application by ID (only if it belongs to the authenticated user)

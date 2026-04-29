@@ -1,6 +1,6 @@
 import express from "express"
 import CompanyNote from "../models/CompanyNote.js"
-import { authenticateToken } from "../middleware/auth.js"
+import authenticateToken from "../middleware/auth.js"
 
 const router = express.Router()
 

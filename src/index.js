@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import authRoutes from './routes/auth.js'
 import applicationRoutes from './routes/applications.js'
+import companyNoteRoutes from './routes/companyNotes.js'
 
 const app = express()
 app.use(cors())
@@ -11,6 +12,7 @@ app.use(express.json())
 
 app.use('/auth', authRoutes)
 app.use('/applications', applicationRoutes)
+app.use('/company-notes', companyNoteRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

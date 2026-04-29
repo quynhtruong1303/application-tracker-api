@@ -2,6 +2,7 @@ import express from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
+import authenticateToken from '../middleware/auth.js'
 
 const router = express.Router()
 
@@ -50,6 +51,17 @@ router.post('/login', async (req, res) => {
         console.error(err)
         res.status(500).json({ message: 'Server error' })
     }
+})
+
+// GET /auth/me — returns the logged-in user's name and email
+router.get('/me', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('name email')
+    if (!user) return res.status(404).json({ message: 'User not found' })
+    res.json(user)
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
 })
 
 export default router

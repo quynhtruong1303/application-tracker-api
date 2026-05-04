@@ -32,4 +32,4 @@ The API is hosted on Render: [Application Tracker API](https://application-track
 
 ## Frontend
 
-The frontend client is currently in development and will be linked here once deployed.
+AppTrack is LIVE at: [AppTrack](https://application-tracker-client.onrender.com/)
